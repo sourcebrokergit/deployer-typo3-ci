@@ -1,0 +1,18 @@
+variables:
+  BACKEND_COMMAND_TEST: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader && composer test
+  BACKEND_COMMAND_BUILD: composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader --no-dev
+
+  BACKEND_IMAGE: thecodingmachine/php:${PHP}-v4-cli-node${NODE}
+
+  BACKEND_FOLDER_BUILD_1: ./
+  BACKEND_FOLDER_BUILD_2: ''
+  BACKEND_FOLDER_BUILD_3: ''
+  BACKEND_FOLDER_BUILD_4: ''
+  BACKEND_FOLDER_BUILD_5: ''
+
+  # variable to retry not supported yet https://gitlab.com/gitlab-org/gitlab/-/merge_requests/98100
+  # RETRY_TEST_BACKEND: 2
+
+  BACKEND_IMAGE_EXTENSIONS: gd intl
+  # thecodingmachine image variable for activating PHP_EXTENSIONS
+  PHP_EXTENSIONS: $BACKEND_IMAGE_EXTENSIONS

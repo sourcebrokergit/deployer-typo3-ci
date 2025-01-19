@@ -1,0 +1,10 @@
+variables:
+  PHP: '8.2'
+  NODE: '20'
+
+  TEST_TRIGGER_BY_CI_COMMIT_BRANCH: /^(main|prelive|beta|dev|develop|production|staging)$/i
+  TEST_TRIGGER_BY_CI_COMMIT_TAG: /.*/
+
+  DEPLOY_TRIGGER_BY_CI_COMMIT_TAG: /.*/
+
+  # ARTIFACTS_EXPIRE_IN: '2h'   // expire_in is not supported yet for env vars: https://gitlab.com/gitlab-org/gitlab/-/issues/365855

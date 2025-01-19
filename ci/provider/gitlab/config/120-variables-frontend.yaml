@@ -1,0 +1,13 @@
+variables:
+  FRONTEND_COMMAND_TESTS: cd assets && npm ci && npm run test
+  FRONTEND_COMMAND_BUILD: cd assets && npm ci && npm run production
+
+  FRONTEND_IMAGE: thecodingmachine/php:${PHP}-v4-cli-node${NODE}
+
+  FRONTEND_FOLDER_BUILD_1: public/assets/frontend/build
+  FRONTEND_FOLDER_BUILD_2: ''
+  FRONTEND_FOLDER_BUILD_3: ''
+  FRONTEND_FOLDER_BUILD_4: ''
+  FRONTEND_FOLDER_BUILD_5: ''
+
+  RETRY_TEST_FRONTEND: 2

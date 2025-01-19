@@ -1,0 +1,10 @@
+test-frontend:
+  stage: test
+  image:
+    name: $FRONTEND_IMAGE
+  needs:
+    - job: init
+  retry:
+    max: 2
+  script:
+    - bash -c "$FRONTEND_COMMAND_TESTS"

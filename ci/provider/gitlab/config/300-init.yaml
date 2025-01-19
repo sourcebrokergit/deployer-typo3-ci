@@ -1,0 +1,5 @@
+init:
+  stage: init
+  image:
+    name: $BACKEND_IMAGE
+  script: echo "Init"

@@ -1,0 +1,21 @@
+build-frontend:
+  stage: build
+  needs:
+    - job: init
+  image:
+    name: $FRONTEND_IMAGE
+  retry:
+    max: 2
+  script:
+    - bash -c "$FRONTEND_COMMAND_BUILD"
+  artifacts:
+    paths:
+      - $FRONTEND_FOLDER_BUILD_1
+      - $FRONTEND_FOLDER_BUILD_2
+      - $FRONTEND_FOLDER_BUILD_3
+      - $FRONTEND_FOLDER_BUILD_4
+      - $FRONTEND_FOLDER_BUILD_5
+    expire_in: 15 min
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH =~ $DEPLOY_TRIGGER_BY_CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG =~ $DEPLOY_TRIGGER_BY_CI_COMMIT_TAG

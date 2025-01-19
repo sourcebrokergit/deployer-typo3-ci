@@ -1,0 +1,10 @@
+test-backend:
+  stage: test
+  image:
+    name: $BACKEND_IMAGE
+  needs:
+    - job: init
+  retry:
+    max: 2
+  script:
+    - bash -c "$BACKEND_COMMAND_TEST"
