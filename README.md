@@ -1,5 +1,15 @@
 # deployer-typo3-ci
 
+## Contents
+
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Stages](#stages)
+- [Variables](#variables)
+- [Deployer Tasks](#deployer-tasks)
+- [Own repo for overwrites](#own-repo-for-overwrites)
+- [Example configs](#example-configs)
+
 ## Introduction
 
 This is a template for TYPO3 CMS projects that need continuous integration and deployment.
@@ -98,9 +108,25 @@ The worst possible scenario you can use is to copy all CI/CD files to your proje
        ->set('bin/php', '/home/www/t3base13-public/live/.bin/php')
        ->set('public_urls', ['https://live-t3base13.example.com'])
        ->set('deploy_path', '/home/www/t3base13/live');
+   
+   host('beta')
+    ->setHostname('vm-dev.example.com')
+    ->setRemoteUser('deploy')
+    ->set('bin/php', '/home/www/t3base13-public/beta/.bin/php');
+    ->set('public_urls', ['https://beta-t3base13.example.com'])
+    ->set('deploy_path', '/home/www/t3base13/beta');
    ```
 
+   Those two lines are required in your ``deploy.php`` file:
+
+   ```php
+
+   require_once(__DIR__ . '/vendor/sourcebroker/deployer-loader/autoload.php');
+   new \SourceBroker\DeployerTypo3Ci\Loader();
+   ```
+   
 9. Push the changes to your repository and see the pipeline at your project.
+
 
 ## Stages
 
@@ -115,6 +141,64 @@ The worst possible scenario you can use is to copy all CI/CD files to your proje
     - **Frontend Build** (`ci/provider/gitlab/config/510-build-frontend.yaml`): Builds the frontend.
 - **Deploy Stage** (`ci/provider/gitlab/config/600-deploy.yaml`): Deploys the application using Deployer.
 
+
+## Variables
+
+- **Variables** (`ci/provider/gitlab/config/100-variables.yaml`):
+
+   - `PHP` PHP version for backend test and build.
+   - `NODE` PHP version for frontend test and build.
+   - `TEST_TRIGGER_BY_CI_COMMIT_BRANCH` Regexp for branches that trigger the pipeline for test only.
+   - `TEST_TRIGGER_BY_CI_COMMIT_TAG` Regexp for tags that trigger the pipeline for test only.
+   - `DEPLOY_TRIGGER_BY_CI_COMMIT_TAG` Regexp for tags that trigger deployment.
+
+- **Backend Variables** (`ci/provider/gitlab/config/110-variables-backend.yaml`):
+
+   - `BACKEND_COMMAND_TEST` Command to run backend tests.
+   - `BACKEND_COMMAND_BUILD` Command to build the backend.
+   - `BACKEND_IMAGE` Docker image for the backend.
+   - `BACKEND_FOLDER_BUILD_*` Paths for backend build artifacts.
+
+- **Frontend Variables** (`ci/provider/gitlab/config/120-variables-frontend.yaml`):
+
+   - `FRONTEND_COMMAND_TESTS` Command to run frontend tests.
+   - `FRONTEND_COMMAND_BUILD` Command to build the frontend.
+   - `FRONTEND_IMAGE` Docker image for the frontend.
+   - `FRONTEND_FOLDER_BUILD_*` Paths for frontend build artifacts.
+
+- **GitLab Variables** (`ci/provider/gitlab/config/130-variables-gitlab.yaml`):
+
+   - `FF_USE_FASTZIP` Enable fast zip for artifacts.
+   - `ARTIFACT_COMPRESSION_LEVEL` Compression level for artifacts.
+   - `CACHE_COMPRESSION_LEVEL` Compression level for cache.
+   - `TRANSFER_METER_FREQUENCY` Frequency of transfer meter updates.
+   - `DOCKER_DRIVER` Docker driver to use.
+   - `DOCKER_BUILDKIT` Enable Docker BuildKit.
+   - `BUILDKIT_INLINE_CACHE` Enable inline cache for BuildKit.
+   - `COMPOSE_DOCKER_CLI_BUILD` Enable Docker CLI build for Compose.
+
+## Deployer Tasks
+
+The project uses Deployer for deployment tasks. The configuration files are located in the `deployer/default` directory.
+
+- **Cache Management**:
+
+    - `typo3cms:cache:flush:pages` Flushes TYPO3 CMS page cache.
+    - `typo3cms:cache:warmup:system` Warms up TYPO3 CMS system cache.
+
+- **Extension Management**:
+
+    - `typo3cms:extension:setup` Sets up TYPO3 CMS extensions.
+
+- **Language Management**:
+
+    - `typo3cms:language:update` Updates TYPO3 CMS languages.
+
+- **Deployment**:
+
+    - `deploy:upload_build` Uploads the build to the server.
+    - `deploy-ci` Main deployment task for continuous integration.
+  
 ## Own Repo for Overwrites
 
 You may be interested in creating your own repo with values for overwriting variables of `sourcebrokergit/deployer-typo3-ci`.
@@ -141,3 +225,29 @@ FRONTEND_FOLDER_BUILD_1: public/assets-1/frontend/build
 FRONTEND_FOLDER_BUILD_2: public/assets-2/frontend/build
 ```
 
+### Few separate assets with separate build commands and different node versions
+
+```yaml
+build-frontend-assets3:
+  stage: build
+  image:
+    name: thecodingmachine/php:${PHP}-v4-cli-node18
+  retry:
+    max: 2
+  script:
+    - bash -c "cd vendor/my_company/my_ext/Resources/Private/Assets && npm ci && npm run production"
+  artifacts:
+    paths:
+      - public/assets/frontend/build-assets3
+    expire_in: 15 min
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH =~ $DEPLOY_TRIGGER_BY_CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG =~ $DEPLOY_TRIGGER_BY_CI_COMMIT_TAG
+
+deploy:
+  needs:
+    - job: test-frontend
+    - job: test-backend
+    - job: build-frontend
+    - job: build-backend
+    - job: build-frontend-assets3
