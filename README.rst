@@ -1,22 +1,27 @@
-Documentation
-=============
+deployer-typo3-ci
+=================
 
 .. contents::
    :local:
-   :depth: 2
+   :depth: 1
 
-This project is a template for TYPO3 CMS projects with continuous integration and deployment using GitLab CI/CD and Deployer.
 
-For now it uses only Gitlab CI/CD.
+
+
+Documentation
+~~~~~~~~~~~~
+
+This is a template for TYPO3 CMS projects that need continuous integration and deployment.
+
+For now it uses only GitLab CI/CD (Deployer).
 
 **The aim is to have minimal config at gitlab-ci.yaml of projects and keep the base of CI/CD config outside of projects' repositories.**
 
 You can use this repository for several possible ways:
 
-1. Clone it whole and use as own base with "include remote".
-2. Reference it from your project with "include remote" and overwrite at your projects' ``gitlab-ci.yaml``.
-3. Reference it from your project with "include remote" and overwrite it with "include remote" from your own CI/CD special repo
-   and overwrite edge cases at projects` ``gitlab-ci.yaml``.
+1. Reference it from your project with "include remote" and overwrite at your projects' ``gitlab-ci.yaml``.
+2. Reference it from your project with "include remote", then overwrite it with "include remote" from your own special repo
+   and finally overwrite edge cases at projects` ``gitlab-ci.yaml``.
 
 The worst possible scenario you can use is to copy all CI/CD files to your project repository and maintain it there for each project.
 This is not recommended as it will be hard for you to maintain and upgrade in the future if you have several dozen of projects
@@ -27,11 +32,8 @@ Installation
 ~~~~~~~~~~~~
 
 1. Install with composer: ``composer require sourcebrokergit/deployer-typo3-ci``.
-2. Create file ``.gitlab-ci.yml`` in the root of your project and put there the content below. Adapt the values in
-   ``PHP``, ``NODE``, ``DEPLOY_TRIGGER_BY_CI_COMMIT_BRANCH``, ``DEPLOYER_BRANCH_TO_SELECTOR`` and ``DEPLOYER_TAG_TO_SELECTOR``
-   to your needs. Adapt the tag version in the include remote url. The version is the version of the deployer-typo3-ci
-   you want to use. If after push pipeline does not start at all check the ``TEST_TRIGGER_BY_CI_COMMIT_BRANCH`` value.
-   The name of branch you push to must be inside pregmatch of ``TEST_TRIGGER_BY_CI_COMMIT_BRANCH``
+
+2. Create file ``.gitlab-ci.yml`` in the root of your project and put there the content below.
 
    .. code-block:: yaml
 
@@ -45,10 +47,18 @@ Installation
          DEPLOYER_BRANCH_TO_SELECTOR: beta:staging,main:production
          DEPLOYER_TAG_TO_SELECTOR: production
 
+   Adapt the values to your needs. Adapt the tag version in the include remote url. This version should be the same as
+   the version of the ``deployer-typo3-ci`` installed in your project in step 1 with composer.
+   Use ``composer show | grep 'sourcebroker/deployer-typo3-ci'`` to see the version of the ``deployer-typo3-ci`` installed
+   in your project.
+
+   If after push pipeline does not start at all check the ``TEST_TRIGGER_BY_CI_COMMIT_BRANCH`` value.
+   The name of branch you push to must be inside pregmatch of ``TEST_TRIGGER_BY_CI_COMMIT_BRANCH``
+
 3. **Backend test**.
    The command for backend test is defined in ``BACKEND_COMMAND_TEST`` and has value:
    ``composer install --prefer-dist --no-progress --no-interaction --optimize-autoloader && composer test``.
-   You can either overwrite it in your ``.gitlab-ci.yml`` or you can just add "test" script in your composer.json.
+   You can either overwrite it in your ``.gitlab-ci.yml`` or you can just add ``test`` script in your ``composer.json``.
 
 4. **Frontend test**.
    The command for frontend test is defined in ``FRONTEND_COMMAND_TEST`` and has value:
@@ -66,7 +76,7 @@ Installation
    the ``FRONTEND_COMMAND_TEST`` command remember to also modify the ``FRONTEND_FOLDER_BUILD_1``.
 
 7. **Deploy**.
-   Add ``SSH_PRIVATE_KEY`` variable to your GitLab project CI/CD settings as "mask variable". This variable hold
+   Add ``SSH_PRIVATE_KEY`` variable to your GitLab project CI/CD settings as ``mask variable``. This variable hold
    the private key for the user that will deploy the project from deployer level. Prepare this ``SSH_PRIVATE_KEY`` with
    following command: ``cat privatekey | base64 -w0`` and on mac ``cat privatekey | base64 -b0``
 
@@ -207,3 +217,50 @@ Then you should add your remote inclusion at ``.gitlab-ci.yml``. Example:
    include:
      - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.21/ci/provider/gitlab/main.yml
      - remote: https://raw.githubusercontent.com/my_company/deployer-typo3-ci/1.0.0/ci/provider/gitlab/overrides.yml
+
+
+Example configs
+~~~~~~~~~~~~~~~
+
+Few separate assets with separate build commands
+################################################
+
+.. code-block:: yaml
+
+      [...]
+
+      FRONTEND_COMMAND_BUILD: >
+        cd ${CI_PROJECT_DIR}/assets-1 && npm ci && npm run production;
+        cd ${CI_PROJECT_DIR}/assets-2 && npm ci && npm run production;
+      FRONTEND_FOLDER_BUILD_1: public/assets-1/frontend/build
+      FRONTEND_FOLDER_BUILD_2: public/assets-2/frontend/build
+
+
+Few separate assets with separate build commands and different node versions
+##########################################################################
+
+.. code-block:: yaml
+
+    build-frontend-assets3:
+      stage: build
+      image:
+        name: thecodingmachine/php:${PHP}-v4-cli-node18
+      retry:
+        max: 2
+      script:
+        - bash -c "cd vendor/my_company/my_ext/Resources/Private/Assets && npm ci && npm run production"
+      artifacts:
+        paths:
+          - public/assets/frontend/build-assets3
+        expire_in: 15 min
+      rules:
+        - if: $CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH =~ $DEPLOY_TRIGGER_BY_CI_COMMIT_BRANCH
+        - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG =~ $DEPLOY_TRIGGER_BY_CI_COMMIT_TAG
+
+    deploy:
+      needs:
+        - job: test-frontend
+        - job: test-backend
+        - job: build-frontend
+        - job: build-backend
+        - job: build-frontend-assets3
