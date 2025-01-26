@@ -13,7 +13,6 @@ class Loader
         $typo3MajorVersion = $this->getTypo3MajorVersion($this->projectRootAbsolutePath());
         \Deployer\set('typo3_major_version', $typo3MajorVersion);
         new Load([
-                ['path' => 'vendor/sourcebroker/deployer-instance/deployer'],
                 ['path' => 'vendor/sourcebroker/deployer-extended/deployer'],
                 ['path' => 'vendor/sourcebroker/deployer-typo3-ci/deployer/default'],
 //                [

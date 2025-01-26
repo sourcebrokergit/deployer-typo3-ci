@@ -17,8 +17,8 @@
     "typo3/cms-core": "^12.4 || ^13.4",
     "deployer/deployer": "~7.0 || dev-master",
     "sourcebroker/deployer-loader": "^4 || dev-master",
-    "sourcebroker/deployer-extended": "^19 || dev-master",
-    "helhum/typo3-console": "^5.5 || ^6 || ^7 || ^8 || dev-master"
+    "sourcebroker/deployer-extended": "dev-master",
+    "helhum/typo3-console": "^8 || dev-master"
   },
   "autoload": {
     "psr-4": {
