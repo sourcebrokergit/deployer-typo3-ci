@@ -70,8 +70,6 @@ set('clear_paths', [
     '.idea',
     '.php_cs',
     '.php-cs-fixer.php',
-    'composer.json',
-    'composer.lock',
     'composer.phar',
     'dynamicReturnTypeMeta.json',
     'phive.xml',
