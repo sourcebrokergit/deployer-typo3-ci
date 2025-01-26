@@ -6,8 +6,6 @@ use Deployer\Exception\RunException;
 
 $composerConfig = json_decode(file_get_contents('./composer.json'), true, 512, JSON_THROW_ON_ERROR);
 
-set('allow_anonymous_stats', false);
-
 set('web_path', function () use ($composerConfig) {
     if ($composerConfig['extra']['typo3/cms']['web-dir'] ?? false) {
         return rtrim($composerConfig['extra']['typo3/cms']['web-dir'], '/') . '/';
@@ -23,6 +21,8 @@ set('bin/typo3', function () use ($composerConfig) {
 
     return 'vendor/bin/typo3';
 });
+
+set('allow_anonymous_stats', false);
 
 set('writable_mode', 'skip');
 

@@ -1,6 +1,6 @@
 {
   "name": "sourcebroker/deployer-typo3-ci",
-  "description": "CI for TYPO3 with deployer",
+  "description": "CI for TYPO3 with Deployer",
   "license": "MIT",
   "keywords": [
     "TYPO3",
