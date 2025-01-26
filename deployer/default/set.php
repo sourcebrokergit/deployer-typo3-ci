@@ -4,9 +4,25 @@ namespace Deployer;
 
 use Deployer\Exception\RunException;
 
+$composerConfig = json_decode(file_get_contents('./composer.json'), true, 512, JSON_THROW_ON_ERROR);
+
 set('allow_anonymous_stats', false);
 
-set('web_path', 'public/');
+set('web_path', function () use ($composerConfig) {
+    if ($composerConfig['extra']['typo3/cms']['web-dir'] ?? false) {
+        return rtrim($composerConfig['extra']['typo3/cms']['web-dir'], '/') . '/';
+    }
+
+    return 'public/';
+});
+
+set('bin/typo3', function () use ($composerConfig) {
+    if ($composerConfig['config']['bin-dir'] ?? false) {
+        return $composerConfig['config']['bin-dir'] . '/typo3';
+    }
+
+    return 'vendor/bin/typo3';
+});
 
 set('writable_mode', 'skip');
 
@@ -16,25 +32,25 @@ set('shared_files', [
     '.env'
 ]);
 
+set('log_files', 'var/log/typo3_*.log');
+
 set('shared_dirs', function () {
     return [
         get('web_path') . 'fileadmin',
-        get('web_path') . 'uploads',
         get('web_path') . 'typo3temp/assets/_processed_',
         get('web_path') . 'typo3temp/assets/images',
-        !empty(get('web_path')) ? 'var/charset' : 'typo3temp/var/charset',
-        !empty(get('web_path')) ? 'var/lock' : 'typo3temp/var/lock',
-        !empty(get('web_path')) ? 'var/log' : 'typo3temp/var/log',
-        !empty(get('web_path')) ? 'var/session' : 'typo3temp/var/session',
+        'var/charset',
+        'var/lock',
+        'var/log',
+        'var/session',
     ];
 });
 
 set('writable_dirs', function () {
     return [
-        get('web_path') . 'typo3conf',
+        get('web_path') . 'fileadmin',
         get('web_path') . 'typo3temp',
-        get('web_path') . 'uploads',
-        get('web_path') . 'fileadmin'
+        'var',
     ];
 });
 
@@ -66,7 +82,6 @@ set('clear_paths', [
     'typoscript-lint.yml'
 ]);
 
-set('bin/typo3cms', './vendor/bin/' . (file_exists('./vendor/bin/typo3cms') ? 'typo3cms' : 'typo3'));
 
 set('user', function () {
     if (getenv('CI') !== false) {
