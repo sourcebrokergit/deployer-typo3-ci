@@ -1,4 +1,3 @@
-### TODO: an image with composer / rsync / deployer would be best
 deploy:
   stage: deploy
   resource_group: "deploy"

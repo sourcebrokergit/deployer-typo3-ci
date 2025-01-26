@@ -1,10 +1,10 @@
 #!/bin/sh
 
 if [ -n "$CI_COMMIT_TAG" ]; then
-  export DEPLOYER_SELECTOR="$DEPLOYER_TAG_TO_SELECTOR"
+  export DEPLOYER_SELECTOR="$DEPLOYER_SELECTOR_FOR_TAG"
   export DEPLOYER_BT="--tag=${CI_COMMIT_TAG}"
 else
-  IFS=',' read -ra MAPPINGS <<< "$DEPLOYER_BRANCH_TO_SELECTOR"
+  IFS=',' read -ra MAPPINGS <<< "$DEPLOYER_SELECTOR_FOR_BRANCH"
   for mapping in "${MAPPINGS[@]}"; do
     IFS=':' read -ra PAIR <<< "$mapping"
     if [ "${PAIR[0]}" == "$CI_COMMIT_BRANCH" ]; then
