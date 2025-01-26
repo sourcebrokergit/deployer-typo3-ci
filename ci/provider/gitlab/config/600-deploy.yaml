@@ -22,7 +22,7 @@ deploy:
     max: 2
   script:
     - | 
-      if [ -z "$DEPLOYER_SELECTOR" ]; then curl -s https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.9/ci/provider/gitlab/scripts/deployer_selector.sh -o deployer_selector_${CI_JOB_ID}.sh && source deployer_selector_${CI_JOB_ID}.sh; fi
+      if [ -z "$DEPLOYER_SELECTOR" ]; then curl -s https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.10/ci/provider/gitlab/scripts/deployer_selector.sh -o deployer_selector_${CI_JOB_ID}.sh && source deployer_selector_${CI_JOB_ID}.sh; fi
       cd ${CI_BUILDS_DIR} && mkdir -p deployer && cd deployer && composer require ${DEPLOYER_INSTALL:-deployer/deployer:^7.5} --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader
       cd ${CI_PROJECT_DIR} && ${CI_BUILDS_DIR}/deployer/vendor/bin/dep deploy-ci ${DEPLOYER_BT} ${DEPLOYER_OPTIONS} ${DEPLOYER_SELECTOR} -vv
   rules:
