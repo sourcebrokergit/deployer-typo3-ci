@@ -58,8 +58,6 @@ set('writable_dirs', function () {
     ];
 });
 
-
-
 set('clear_paths', [
     '.composer-cache',
     '.ddev',
@@ -83,7 +81,6 @@ set('clear_paths', [
     'rector.php',
     'typoscript-lint.yml'
 ]);
-
 
 set('user', function () {
     if (getenv('CI') !== false) {
