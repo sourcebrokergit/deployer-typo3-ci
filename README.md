@@ -186,16 +186,16 @@ The project uses Deployer for deployment tasks. The configuration files are loca
 
 - **Cache Management**:
 
-    - `typo3cms:cache:flush:pages` Flushes TYPO3 CMS page cache.
-    - `typo3cms:cache:warmup:system` Warms up TYPO3 CMS system cache.
+    - `typo3:cache:flush:pages` Flushes TYPO3 CMS page cache.
+    - `typo3:cache:warmup:system` Warms up TYPO3 CMS system cache.
 
 - **Extension Management**:
 
-    - `typo3cms:extension:setup` Sets up TYPO3 CMS extensions.
+    - `typo3:extension:setup` Sets up TYPO3 CMS extensions.
 
 - **Language Management**:
 
-    - `typo3cms:language:update` Updates TYPO3 CMS languages.
+    - `typo3:language:update` Updates TYPO3 CMS languages.
 
 - **Deployment**:
 

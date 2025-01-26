@@ -17,7 +17,7 @@ task('deploy-ci', [
     'deploy:symlink',
     'cache:clear_php_cli',
     'cache:clear_php_http',
-    'typo3cms:cache:flush:pages',
+    'typo3:cache:flush:pages',
     'deploy:cleanup',
     'deploy:success',
 
