@@ -10,14 +10,14 @@ workflow:
     - if: $CI_COMMIT_TAG =~ $TEST_TRIGGER_BY_CI_COMMIT_TAG
 
 include:
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/100-variables.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/110-variables-backend.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/120-variables-frontend.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/130-variables-gitlab.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/200-default.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/300-init.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/400-test-backend.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/410-test-frontend.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/500-build-backend.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/510-build-frontend.yaml
-  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.6/ci/provider/gitlab/config/600-deploy.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/100-variables.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/110-variables-backend.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/120-variables-frontend.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/130-variables-gitlab.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/200-default.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/300-init.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/400-test-backend.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/410-test-frontend.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/500-build-backend.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/510-build-frontend.yaml
+  - remote: https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.7/ci/provider/gitlab/config/600-deploy.yaml
