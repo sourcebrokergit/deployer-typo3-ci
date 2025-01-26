@@ -8,7 +8,7 @@ task('deploy-ci', [
     'deploy:check_remote',
     'deploy:setup',
     'deploy:release',
-    'deploy:upload_build',
+    'file:upload_build',
     'deploy:shared',
     'deploy:writable',
     'deploy:clear_paths',
