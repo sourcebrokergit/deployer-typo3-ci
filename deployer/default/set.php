@@ -4,6 +4,18 @@ namespace Deployer;
 
 use Deployer\Exception\RunException;
 
+set('allow_anonymous_stats', false);
+
+set('writable_mode', 'skip');
+
+set('composer_channel', 2);
+
+set('default_timeout', 900);
+
+set('keep_releases', 5);
+
+set('log_files', 'var/log/typo3_*.log');
+
 $composerConfig = json_decode(file_get_contents('./composer.json'), true, 512, JSON_THROW_ON_ERROR);
 
 set('web_path', function () use ($composerConfig) {
@@ -22,17 +34,9 @@ set('bin/typo3', function () use ($composerConfig) {
     return 'vendor/bin/typo3';
 });
 
-set('allow_anonymous_stats', false);
-
-set('writable_mode', 'skip');
-
-set('composer_channel', 2);
-
 set('shared_files', [
     '.env'
 ]);
-
-set('log_files', 'var/log/typo3_*.log');
 
 set('shared_dirs', function () {
     return [
@@ -54,9 +58,7 @@ set('writable_dirs', function () {
     ];
 });
 
-set('default_timeout', 900);
 
-set('keep_releases', 5);
 
 set('clear_paths', [
     '.composer-cache',
