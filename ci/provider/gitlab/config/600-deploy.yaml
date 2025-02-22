@@ -21,8 +21,30 @@ deploy:
   retry:
     max: 2
   script:
-    - | 
-      if [ -z "$DEPLOYER_SELECTOR" ]; then curl -s https://raw.githubusercontent.com/sourcebrokergit/deployer-typo3-ci/0.0.13/ci/provider/gitlab/scripts/deployer_selector.sh -o deployer_selector_${CI_JOB_ID}.sh && source deployer_selector_${CI_JOB_ID}.sh; rm deployer_selector_${CI_JOB_ID}.sh; fi
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+      export DEPLOYER_SELECTOR="$DEPLOYER_SELECTOR_FOR_TAG"
+      export DEPLOYER_BT="--tag=${CI_COMMIT_TAG}"
+      else
+      IFS=',' read -ra MAPPINGS <<< "$DEPLOYER_SELECTOR_FOR_BRANCH"
+      for mapping in "${MAPPINGS[@]}"; do
+      IFS=':' read -ra PAIR <<< "$mapping"
+      if [ "${PAIR[0]}" == "$CI_COMMIT_BRANCH" ]; then
+      export DEPLOYER_SELECTOR="${PAIR[1]}"
+      export DEPLOYER_BT="--branch=${CI_COMMIT_BRANCH}"
+      break
+      fi
+      done
+      if [ -z "$DEPLOYER_SELECTOR" ]; then
+      echo "Neither tag pushed or branch '${CI_COMMIT_BRANCH}' is not found in DEPLOY_TRIGGER_BY_CI_COMMIT_BRANCH. Exiting job."
+      exit 0
+      fi
+      fi
+      if [ -z "$DEPLOYER_SELECTOR" ]; then
+      echo "DEPLOYER_SELECTOR is empty. Exiting job."
+      exit 0
+      fi
+      echo "DEPLOYER_SELECTOR: $DEPLOYER_SELECTOR"
       cd ${CI_BUILDS_DIR} && mkdir -p deployer && cd deployer && composer require ${DEPLOYER_INSTALL:-deployer/deployer:^7.5} --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader
       cd ${CI_PROJECT_DIR} && ${CI_BUILDS_DIR}/deployer/vendor/bin/dep deploy-ci ${DEPLOYER_BT} ${DEPLOYER_OPTIONS} ${DEPLOYER_SELECTOR} -vv
   rules:

@@ -1,4 +1,4 @@
-name: deployer-typo3-ci
+name: deployer-typo3-ci-sourcebrokergit
 type: php
 docroot: ""
 php_version: "8.3"
